@@ -122,6 +122,21 @@ def getlistadoAnalysis():
             'parametros':['tiempo','celda_pais','celda_vacunacion'],
             'parametros_texto':['nombre_pais_1','nombre_pais_2']
         },
+        'Porcentaje de hombres infectados por COVID en un Pais desde el primer caso activo':{
+            'caso':11,
+            'name':'Porcentaje de hombres infectados por COVID en un Pais desde el primer caso activo',
+            'no_parametros': 5,
+            'parametros':['celda_tiempo','celda_genero_hombre','celda_total','celda_pais'],
+            'opcionales': ['nombre_pais','celda_pais'],
+            'parametros_texto':['nombre_pais']
+        },
+        'Analisis Comparativo entre paises o continentes':{
+            'caso':12,
+            'name':'Analisis Comparativo entre paises o continentes',
+            'no_parametros': 5,
+            'parametros':['tiempo','celda_pais_continente','celda_comparacion'],
+            'parametros_texto':['nombre_pais_continente_1','nombre_pais_continente_2']
+        },
         'Muertes segun regiones de un pais':{
             'caso':14,
             'name':'Muertes segun regiones de un pais',
@@ -168,6 +183,7 @@ def listaAnalisisNombres():
                 'Prediccion de mortalidad por COVID en un Pais','Analisis del numero de muertes por coronavirus en un Pais',
                 'Tendencia del numero de infectados por dia de un Pais','Prediccion de casos de un pais para un año',
                 'Tendencia de la vacunacion de en un Pais','Analisis Comparativo de Vacunacion entre 2 paises',
+                'Porcentaje de hombres infectados por COVID en un Pais desde el primer caso activo','Analisis Comparativo entre paises o continentes',
                 'Muertes segun regiones de un pais','Tendencia de casos confirmados de COVID en un departamento de un Pais',
                 'Tasa de mortalidad por (COVID-19) en un pais',
                 'Comparacion entre el numero de casos detectados y el numero de pruebas de un pais','Prediccion de casos confirmados por dia']

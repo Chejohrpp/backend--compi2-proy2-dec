@@ -31,47 +31,48 @@ def inicio():
 
 @app.route("/api",methods=['GET'])
 def hello_world():
-    # return jsonify({"hello":"hello world","atributo":224})
-    # print(app.config["path_file"])
     return jsonify(configReturn(''))
 
 
 @app.route("/api",methods=['POST'])
 def recibirdata():
-    
-    if request.files:
-        data = request.files["file_data"]
-        name = fm.getName(data.filename)
-        app.config["file_name"] = data.filename
-        data.save(os.path.join(app.config["file_analizar"],name))
-        # print("data saved")
-        app.config["path_file"]  = app.config["file_analizar"] + '/' + name
-        # print(app.config["path_file"])
-        columnas = fm.getColumnas(app.config["path_file"])
-        columnas_json = {"columnas": columnas}
-        return jsonify(configReturn(columnas_json))
-
+    try:
+        if request.files:
+            data = request.files["file_data"]
+            name = fm.getName(data.filename)
+            app.config["file_name"] = data.filename
+            data.save(os.path.join(app.config["file_analizar"],name))
+            # print("data saved")
+            app.config["path_file"]  = app.config["file_analizar"] + '/' + name
+            # print(app.config["path_file"])
+            columnas = fm.getColumnas(app.config["path_file"])
+            columnas_json = {"columnas": columnas}
+            return jsonify(configReturn(columnas_json))
+    except Exception as err:
+        return configReturnStatus(500,{'error':err})
     return jsonify(configReturn(''))
 
 @app.route('/api/parametros',methods=['GET'])
 def enviar_parametros():
-    listaAnalisis = fm.getlistadoAnalysis()
-    file_name =  app.config["file_name"]
-    columnas = fm.getColumnas(app.config["path_file"])
-    listaNombre =  fm.listaAnalisisNombres()
-    body = {"listaAnalisis": listaAnalisis,"fileName":file_name,"columnas":columnas,'listaNombres':listaNombre}
-    return jsonify(configReturn(body))
+    try:
+        listaAnalisis = fm.getlistadoAnalysis()
+        file_name =  app.config["file_name"]
+        columnas = fm.getColumnas(app.config["path_file"])
+        listaNombre =  fm.listaAnalisisNombres()
+        body = {"listaAnalisis": listaAnalisis,"fileName":file_name,"columnas":columnas,'listaNombres':listaNombre}
+        return jsonify(configReturn(body))
+    except Exception as err:
+        return configReturnStatus(500,{'error':err})
 
 @app.route('/api/parametros',methods=['POST'])
 def realizarAnalisis():
-    if app.config["path_file"] != '':
-        # print(request.json)
-        # print(request.json['caso'])
-        # print(request.json["name"])
-        # print(request.json["parametros"])
-        datos_reporte = an.redirigirAnalisis(app.config["path_file"],request.json["caso"],request.json["name"],request.json["parametros"])
-        app.config["datos_reporte"] = datos_reporte
-    return jsonify(configReturn(''))
+    try:
+        if app.config["path_file"] != '':
+            datos_reporte = an.redirigirAnalisis(app.config["path_file"],request.json["caso"],request.json["name"],request.json["parametros"])
+            app.config["datos_reporte"] = datos_reporte
+        return jsonify(configReturn(''))
+    except Exception as err:
+        return configReturnStatus(500,{'error':err})
 
 @app.route('/api/reporte',methods=['POST','GET'])
 def enviar_reporte():
@@ -84,6 +85,14 @@ def enviar_reporte():
 def redirigirImgs(name_img):
     #'/static/imgs_temp/'+name_img
     return redirect('/static/imgs_temp/'+name_img)
+
+@app.route('/api/clearall',methods=['GET'])
+def limpiarData():
+    app.config["path_file"] = '' ##Esto tiene que quedar nulo
+    app.config["file_name"] = ''  ##Esto tiene que quedar nulo
+    app.config["datos_reporte"] = {}
+    return jsonify(configReturn( {'sucess':True} ))
+    
 
 def configReturn(body):
     retorno = {

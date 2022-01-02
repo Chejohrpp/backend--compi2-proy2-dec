@@ -8,6 +8,8 @@ import reportes.TendenciaDiaPais7 as case7
 import reportes.PrediccionInfecYear8 as case8
 import reportes.TendenciaVacumPais9 as case9
 import reportes.AnVacumPaises10 as case10
+import reportes.PorcetanjeHombrePais11 as case11
+import reportes.AnPaisContinente12 as case12
 import reportes.TendenciaInfecPaisDep15 as case15
 import reportes.MuerteRegPais14 as case14
 import reportes.TasaDead22Pais as case22
@@ -49,6 +51,12 @@ def redirigirAnalisis(filepath,caso,name,param):
         return lista
     if caso == 10:
         lista = case10.analizar(filepath,param)
+        return lista
+    if caso == 11:
+        lista = case11.analizar(filepath,param)
+        return lista
+    if caso == 12:
+        lista = case12.analizar(filepath,param)
         return lista
     if caso == 14:
         lista = case14.analizar(filepath,param)

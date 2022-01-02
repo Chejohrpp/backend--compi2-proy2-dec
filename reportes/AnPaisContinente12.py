@@ -14,26 +14,25 @@ import matplotlib.pyplot as plt
 import fun_main as fm
 import fun_reportes as fr
 
-# 'Analisis Comparativo de Vacunacion entre 2 paises':{
-#             'caso':10,
-#             'name':'Analisis Comparativo de Vacunacion entre 2 paises',
-#             'no_parametros': 4,
-#             'parametros':['tiempo','celda_pais','celda_vacunacion'],
-#             'parametros_texto':['nombre_pais_1','nombre_pais_2']
+# 'Analisis Comparativo entre paises o continentes':{
+#             'caso':12,
+#             'name':'Analisis Comparativo entre paises o continentes',
+#             'no_parametros': 5,
+#             'parametros':['tiempo','celda_pais_continente','celda_comparacion'],
+#             'parametros_texto':['nombre_pais_continente_1','nombre_pais_continente_2']
 #         }
 
 # path_imgs = 'static/imgs_temp'
-name = 'Analisis Comparativo de Vacunacion entre 2 paises'
+name = 'Analisis Comparativo entre paises o continentes'
 
 def analizar(filepath,param):
     ### Asignacion de celdas  ###############################################
     x_celda = param['tiempo']
-    # vacunacion_celda = param['celda_vacunacion']
-    y_celda = param['celda_vacunacion']
-    y_celda2 = param['celda_vacunacion']
-    celda_pais = param['celda_pais']
-    nombre_pais1 = param['nombre_pais_1']
-    nombre_pais2 = param['nombre_pais_2']
+    y_celda = param['celda_comparacion']
+    y_celda2 = param['celda_comparacion']
+    celda_pais = param['celda_pais_continente']
+    nombre_pais1 = param['nombre_pais_continente_1']
+    nombre_pais2 = param['nombre_pais_continente_2']
     ### Lista de variables  ###############################################
     lista_urls_imgs = []
     lista_urls_static = []
@@ -89,7 +88,7 @@ def analizar(filepath,param):
     plt.savefig(path_aux,bbox_inches = "tight")
     plt.clf()
     #### build ###############################################################
-    grado = 3
+    grado = 4
     poly_feature = PolynomialFeatures(grado)
     x_transform = poly_feature.fit_transform(x)
     x_transform2 = poly_feature.fit_transform(x2)
@@ -111,35 +110,8 @@ def analizar(filepath,param):
     calculate(y2,y_predictions2,datos_estaticos,datos_calculados,model2)
     
     #### Graph #######################################################################
-    # title = 'grado usado {}; RMSE = {}; R^2={:.3f}'.format(grado,round(rmse,2),r2)
-    # plt.title(name+"\n"+title,fontsize=10)
-    # plt.xlabel(x_celda)
-    # plt.ylabel(y_celda)
-    # plt.plot(df[x_celda],y_predictions,color="red",linewidth=3)
-    # plt.xticks(rotation=45)
-    # path_aux = fr.generarUrlImg("fig_tendencia.png",lista_urls_static)
-    # plt.autoscale()
-    # plt.savefig(path_aux,bbox_inches = "tight")
-    # plt.clf()
 
     #### Prediccion ##########################################################
-    # min_d = df_xcelda.min()
-    # max_d = tiempo_predecir + len(y) + min_d ##Esto tiene que ser variable
-    # # x_new = np.linspace(min_d,max_d)
-    # x_new = np.arange(min_d,max_d).reshape(-1,1)
-    # # x_new = np.array(x_new).reshape(-1,1)
-    # x_new_transform = poly_feature.fit_transform(x_new)
-    # y_new_predicted = model.predict(x_new_transform)
-
-    # # print("Para el dia {0} contagios seran".format(max_d),y_new_predicted[-1]) ##Imprime la ultima prediccion
-    # datos_calculados.append("Cantidad extra a predecir : " + str(tiempo_predecir))
-    # if (df[x_celda].dtype == 'datetime64[ns]'):
-    #     fecha = df_xcelda.max()
-    #     tiempo_prediccion =  l_encod_x.inverse_transform([fecha])[0] + pd.Timedelta( str(tiempo_predecir) + ' days')
-    #     datos_calculados.append("Tiempo de prediccion : " + str(tiempo_prediccion))
-    # else:
-    #     datos_calculados.append("Tiempo de prediccion : " + str(max_d-1))    
-    # datos_calculados.append("Resultado de Prediccion : " + str(round(y_new_predicted[-1],2)))
 
     #### Graph #######################################################################
     title = 'grado usado {}'.format(grado)
@@ -155,7 +127,7 @@ def analizar(filepath,param):
     plt.savefig(path_aux,bbox_inches = "tight")
     plt.clf()
     #### enviar los datos #######################################################################
-    return fr.addData(datos_calculados,lista_urls_imgs,lista_urls_static,datos_estaticos,'En la grafica se muestra la comparacion que exite entre {} y {} para la vacunacion'.format(nombre_pais1,nombre_pais2),name)
+    return fr.addData(datos_calculados,lista_urls_imgs,lista_urls_static,datos_estaticos,'En la grafica se muestra la comparacion que exite entre {} y {} para {}'.format(nombre_pais1,nombre_pais2,y_celda),name)
 
 
 def calculate(y,y_predictions,datos_estaticos,datos_calculados,model):
