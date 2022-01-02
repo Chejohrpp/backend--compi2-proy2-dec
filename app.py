@@ -12,8 +12,8 @@ ROOT_PATH = os.path.dirname(os.path.realpath(__file__))
 # print ('root paht',ROOT_PATH)
 
 os.environ.update({'ROOT_PATH': ROOT_PATH})
-os.environ.update({'ENV': "desarrollo"}) ### Esto deberia ser cambiado ###
-os.environ.update({'PUERTO': '4000'}) ### Esto deberia ser cambiado ###
+# os.environ.update({'ENV': "desarrollo"}) ### Esto deberia ser cambiado ###
+# os.environ.update({'PUERTO': '4000'}) ### Esto deberia ser cambiado ###
 sys.path.append(os.path.join(ROOT_PATH,'reportes'))
 
 application = Flask(__name__)
@@ -105,6 +105,6 @@ def configReturnStatus(status,body):
     }
     return retorno
 
-### Esto deberia ser cambiado ###
-app.config['DEBUG'] = os.environ.get('ENV') == 'desarrollo'
-app.run(host='localhost',port=int(os.environ.get('PUERTO')))
+# ### Esto deberia ser cambiado ###
+# app.config['DEBUG'] = os.environ.get('ENV') == 'desarrollo'
+# app.run(host='localhost',port=int(os.environ.get('PUERTO')))
