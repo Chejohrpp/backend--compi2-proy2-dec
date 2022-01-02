@@ -18,7 +18,7 @@ sys.path.append(os.path.join(ROOT_PATH,'reportes'))
 
 application = Flask(__name__)
 app = application
-CORS(app)
+# CORS(app)
 
 app.config["file_analizar"] = 'static/files_analizar'
 app.config["path_file"] = '' ##Esto tiene que quedar nulo
