@@ -1,0 +1,11 @@
+# ignorar el virutal enviroment
+.venv
+# ignorar el cache
+*__pycache__
+
+#ignorar files de prueba
+*.csv
+*.xlsx
+*.xls
+*.png
+
