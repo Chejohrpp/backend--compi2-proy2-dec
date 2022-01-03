@@ -10,9 +10,17 @@ import reportes.TendenciaVacumPais9 as case9
 import reportes.AnVacumPaises10 as case10
 import reportes.PorcetanjeHombrePais11 as case11
 import reportes.AnPaisContinente12 as case12
-import reportes.TendenciaInfecPaisDep15 as case15
+import reportes.PromInfecEdadPais13 as case13
 import reportes.MuerteRegPais14 as case14
+import reportes.TendenciaInfecPaisDep15 as case15
+import reportes.PorcentajeDeadPais16 as case16
+import reportes.TasaCompActivosDeadConti17 as case17
+import reportes.CompInfecMunPais18 as case18
+import reportes.PrediccionDeadYearPais19 as case19
+import reportes.TasaCreDailyDead20 as case20
+import reportes.PrediccionTodoMundo21 as case21
 import reportes.TasaDead22Pais as case22
+import reportes.FactoresDeadPais23 as case23
 import reportes.ComCasosTest24 as case24
 import reportes.PrediccionCasoDia25 as case25
 
@@ -58,14 +66,38 @@ def redirigirAnalisis(filepath,caso,name,param):
     if caso == 12:
         lista = case12.analizar(filepath,param)
         return lista
+    if caso == 13:
+        lista = case13.analizar(filepath,param)
+        return lista
     if caso == 14:
         lista = case14.analizar(filepath,param)
         return lista
     if caso == 15:
         lista = case15.analizar(filepath,param)
         return lista
+    if caso == 16:
+        lista = case16.analizar(filepath,param)
+        return lista
+    if caso == 17:
+        lista = case17.analizar(filepath,param)
+        return lista
+    if caso == 18:
+        lista = case18.analizar(filepath,param)
+        return lista
+    if caso == 19:
+        lista = case19.analizar(filepath,param)
+        return lista
+    if caso == 20:
+        lista = case20.analizar(filepath,param)
+        return lista
+    if caso == 21:
+        lista = case21.analizar(filepath,param)
+        return lista
     if caso == 22:
         lista = case22.analizar(filepath,param)
+        return lista
+    if caso == 23:
+        lista = case23.analizar(filepath,param)
         return lista
     if caso == 24:
         lista = case24.analizar(filepath,param)

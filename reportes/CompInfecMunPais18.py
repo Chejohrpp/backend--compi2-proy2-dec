@@ -13,25 +13,23 @@ import matplotlib.pyplot as plt
 import fun_main as fm
 import fun_reportes as fr
 
-# 'Tendencia de casos confirmados de COVID en un departamento de un Pais':{
-#             'caso':15,
-#             'name':'Tendencia de casos confirmados de COVID en un departamento de un Pais',
-#             'no_parametros': 6,
-#             'parametros':['tiempo','confirmados','celda_pais','celda_departamento'],
-#             'parametros_texto':['nombre_pais','nombre_departamento']
+# 'Comportamiento y clasificacion de personas infectadas por COVID-19 por municipio en un Pais':{
+#             'caso':18,
+#             'name':'Comportamiento y clasificacion de personas infectadas por COVID-19 por municipio en un Pais',
+#             'no_parametros': 4,
+#             'parametros':['celda_infectados','celda_pais','celda_municipio'],
+#             'parametros_texto':['nombre_pais']
 #         }
 
 # path_imgs = 'static/imgs_temp'
-name_report = 'Tendencia de casos confirmados de COVID en un departamento de un Pais'
+name_report = 'Comportamiento y clasificacion de personas infectadas por COVID-19 por municipio en un Pais'
 
 def analizar(filepath,param):
     ### Asignacion de celdas  ###############################################
-    x_celda = param['tiempo']
-    y_celda = param['confirmados']
+    x_celda = param['celda_municipio']
+    y_celda = param['celda_infectados']
     celda_pais = param['celda_pais']
-    celda_departamento = param['celda_departamento']
     nombre_pais = param['nombre_pais']
-    nombre_departamento = param['nombre_departamento']
     ### Lista de variables  ###############################################
     lista_urls_imgs = []
     lista_urls_static = []
@@ -48,12 +46,10 @@ def analizar(filepath,param):
     ######### Limpiar los datos ##########################################
     limpia_x = fr.limpiarData(df,x_celda)
     limpia_y = fr.limpiarData(df,y_celda)
+
     if celda_pais != "" and nombre_pais != "":
         df = df[df[celda_pais].str.contains(nombre_pais)]
         datos_calculados.append("Pais Utilizado : " + str(nombre_pais))
-        if celda_departamento != "" and nombre_departamento != "":
-            df = df[df[celda_departamento].str.contains(nombre_departamento)]
-            datos_calculados.append("Departamento Utilizado : " + str(nombre_departamento))
 
     df_xcelda = df[x_celda]
     if (limpia_x == False or df_xcelda.dtype == 'datetime64[ns]'):
@@ -68,18 +64,20 @@ def analizar(filepath,param):
     y = df_ycelda
 
     # ##datos extras##
-    plt.scatter(df[x_celda],df[y_celda],color="blue")
     path_aux = fr.generarUrlImg("fig_muestra.png",lista_urls_static)
+    plt.bar(df[x_celda],df[y_celda],width=0.3)
     plt.xlabel(x_celda)
     plt.ylabel(y_celda)
+    plt.title("Data ingresada",fontsize=10)
     plt.xticks(rotation=45)
-    plt.title("Datos ingresados",fontsize=10)
     plt.autoscale()
+    for i in range(len(df[y_celda])):
+        plt.annotate(str(df[y_celda].iloc[i]), xy=(df[x_celda].iloc[i],df[y_celda].iloc[i]), ha='center', va='bottom')
     plt.savefig(path_aux,bbox_inches = "tight")
     plt.clf()
 
     #### build ###############################################################
-    grado = 1
+    grado = 8
     poly_feature = PolynomialFeatures(grado)
     x_transform = poly_feature.fit_transform(x)
 
@@ -111,13 +109,22 @@ def analizar(filepath,param):
     datos_calculados.append("intercept : " + str(intercept))
     datos_estaticos.append("intercept : " + str(intercept))
 
+    #### Graph #######################################################################
+    path_aux = fr.generarUrlImg("fig_tendencia.png",lista_urls_imgs)
+    plt.bar(df[x_celda],df[y_celda],width=0.3)
+    plt.xlabel(x_celda)
+    plt.ylabel(y_celda)
+    plt.title(name_report,fontsize=10)
+    plt.xticks(rotation=45)
+    plt.autoscale()
+    for i in range(len(df[y_celda])):
+        plt.annotate(str(df[y_celda].iloc[i]), xy=(df[x_celda].iloc[i],df[y_celda].iloc[i]), ha='center', va='bottom')
+    plt.savefig(path_aux,bbox_inches = "tight")
+    plt.clf()
+
     #### Prediccion ##########################################################
     ## no se realiza predicion aqui
 
-    #### Mostrar los puntos entrenados ##########################################################
-    datos_calculados.append(" datos entrenados:  " )
-    for i in range(len(df[x_celda])):
-        datos_calculados.append( str(df[x_celda].iloc[i]) + " : " + str(round(y_predictions[i],2)))
     #### Graph #######################################################################
     title = 'grado usado {}; RMSE = {}; R^2={:.3f}'.format(grado,round(rmse,2),r2)
     plt.title(name_report+"\n"+title,fontsize=10)
@@ -125,10 +132,10 @@ def analizar(filepath,param):
     plt.ylabel(y_celda)
     plt.plot(df[x_celda],y_predictions,color="red",linewidth=3)
     plt.xticks(rotation=45)
-    path_aux = fr.generarUrlImg("fig_tendencia.png",lista_urls_imgs)
+    path_aux = fr.generarUrlImg("fig_Prediccion.png",lista_urls_imgs)
     plt.autoscale()
     plt.savefig(path_aux,bbox_inches = "tight")
     plt.clf()
     # plt.show()
-    return fr.addData(datos_calculados,lista_urls_imgs,lista_urls_static,datos_estaticos,'',name_report)
+    return fr.addData(datos_calculados,lista_urls_imgs,lista_urls_static,datos_estaticos,'En la grafica de barras se muestra el comportamiento de infectados por municipio con una construccion de la grafica de grado {}'.format(grado),name_report)
 

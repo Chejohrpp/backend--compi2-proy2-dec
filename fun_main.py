@@ -137,6 +137,14 @@ def getlistadoAnalysis():
             'parametros':['tiempo','celda_pais_continente','celda_comparacion'],
             'parametros_texto':['nombre_pais_continente_1','nombre_pais_continente_2']
         },
+        'Muertes promedio por casos confirmados y edad de covid 19 en un Pais':{
+            'caso':13,
+            'name':'Muertes promedio por casos confirmados y edad de covid 19 en un Pais',
+            'no_parametros': 5,
+            'parametros':['celda_confirmados','celda_fallecidos','celda_edad','celda_pais'],
+            'opcionales': ['nombre_pais','celda_pais'],
+            'parametros_texto':['nombre_pais']
+        },
         'Muertes segun regiones de un pais':{
             'caso':14,
             'name':'Muertes segun regiones de un pais',
@@ -151,12 +159,63 @@ def getlistadoAnalysis():
             'parametros':['tiempo','confirmados','celda_pais','celda_departamento'],
             'parametros_texto':['nombre_pais','nombre_departamento']
         },
+        'Porcentaje de muertes frente al total de casos en un pais, region o continente':{
+            'caso':16,
+            'name':'Porcentaje de muertes frente al total de casos en un pais, region o continente',
+            'no_parametros': 5,
+            'parametros':['celda_tiempo','celda_fallecidos','celda_total_confirmados','celda_pais_region_continente'],
+            'opcionales': ['celda_pais_region_continente','nombre_pais_region_continente'],
+            'parametros_texto':['nombre_pais_region_continente']
+        },
+        'Tasa de comportamiento de casos activos en relacion al número de muertes en un continente':{
+            'caso':17,
+            'name':'Tasa de comportamiento de casos activos en relacion al número de muertes en un continente',
+            'no_parametros': 4,
+            'parametros':['casos_activos','numero_muertes','celda_continente'],
+            'opcionales': ['nombre_continente','celda_continente'],
+            'parametros_texto':['nombre_continente']
+        },
+        'Comportamiento y clasificacion de personas infectadas por COVID-19 por municipio en un Pais':{
+            'caso':18,
+            'name':'Comportamiento y clasificacion de personas infectadas por COVID-19 por municipio en un Pais',
+            'no_parametros': 4,
+            'parametros':['celda_infectados','celda_pais','celda_municipio'],
+            'parametros_texto':['nombre_pais']
+        },
+        'Prediccion de muertes en el ultimo día del primer año de infecciones en un pais':{
+            'caso':19,
+            'name':'Prediccion de muertes en el ultimo día del primer año de infecciones en un pais',
+            'no_parametros': 5,
+            'parametros':['tiempo','fallecido','celda_pais'],
+            'opcionales': ['nombre_pais','celda_pais'],
+            'parametros_texto':['nombre_pais']
+        },
+        'Tasa de crecimiento de casos de COVID-19 en relacion con nuevos casos diarios y tasa de muerte por COVID-19':{
+            'caso':20,
+            'name':'Tasa de crecimiento de casos de COVID-19 en relacion con nuevos casos diarios y tasa de muerte por COVID-19',
+            'no_parametros': 3,
+            'parametros':['celda_tiempo','casos_diarios','numero_muertes'],
+        },
+         'Predicciones de casos y muertes en todo el mundo':{
+             'caso':21,
+            'name':'Predicciones de casos y muertes en todo el mundo',
+            'no_parametros': 4,
+            'parametros':['tiempo','celda_confirmados','celda_fallecidos'],
+            'parametros_numericos':['tiempo_predecir'],
+       },
         'Tasa de mortalidad por (COVID-19) en un pais':{
             'caso':22,
             'name':'Tasa de mortalidad por (COVID-19) en un pais',
             'no_parametros': 5,
             'parametros':['tiempo','fallecido','celda_pais'],
             'opcionales': ['nombre_pais','celda_pais'],
+            'parametros_texto':['nombre_pais']
+        },
+        'Factores de muerte por COVID-19 en un pais':{
+            'caso':23,
+            'name':'Factores de muerte por COVID-19 en un pais',
+            'no_parametros': 5,
+            'parametros':['tiempo','celda_fallecidos','factor_muerte','celda_pais'],
             'parametros_texto':['nombre_pais']
         },
         'Comparacion entre el numero de casos detectados y el numero de pruebas de un pais':{
@@ -184,7 +243,11 @@ def listaAnalisisNombres():
                 'Tendencia del numero de infectados por dia de un Pais','Prediccion de casos de un pais para un año',
                 'Tendencia de la vacunacion de en un Pais','Analisis Comparativo de Vacunacion entre 2 paises',
                 'Porcentaje de hombres infectados por COVID en un Pais desde el primer caso activo','Analisis Comparativo entre paises o continentes',
+                'Muertes promedio por casos confirmados y edad de covid 19 en un Pais',
                 'Muertes segun regiones de un pais','Tendencia de casos confirmados de COVID en un departamento de un Pais',
-                'Tasa de mortalidad por (COVID-19) en un pais',
+                'Porcentaje de muertes frente al total de casos en un pais, region o continente','Tasa de comportamiento de casos activos en relacion al número de muertes en un continente',
+                'Comportamiento y clasificacion de personas infectadas por COVID-19 por municipio en un Pais','Prediccion de muertes en el ultimo día del primer año de infecciones en un pais',
+                'Tasa de crecimiento de casos de COVID-19 en relacion con nuevos casos diarios y tasa de muerte por COVID-19','Predicciones de casos y muertes en todo el mundo',
+                'Tasa de mortalidad por (COVID-19) en un pais','Factores de muerte por COVID-19 en un pais',
                 'Comparacion entre el numero de casos detectados y el numero de pruebas de un pais','Prediccion de casos confirmados por dia']
     return lista

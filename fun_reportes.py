@@ -42,3 +42,7 @@ def addData(datos_calculados,lista_urls_imgs,lista_urls_static,datos_estaticos,c
 def makeConclusionPredic(prediccion):
     conclusion = 'Con los todos los datos dados, se entreno al modelo para realizar la prediccion y se llego al resultado estimado que es de {}'.format(prediccion)
     return conclusion
+
+def makeConclusionPredic2(prediccion1,prediccion2):
+    conclusion = 'Con los todos los datos dados y utilizando Neural Network MLPRegressor se entreno al modelo para realizar las predicciones y se llegaron al resultado que es de {} y {} respectivamente'.format(prediccion1,prediccion2)
+    return conclusion

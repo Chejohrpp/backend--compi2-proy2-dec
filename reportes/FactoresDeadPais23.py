@@ -14,26 +14,24 @@ import matplotlib.pyplot as plt
 import fun_main as fm
 import fun_reportes as fr
 
-# 'Porcentaje de hombres infectados por COVID en un Pais desde el primer caso activo':{
-#             'caso':11,
-#             'name':'Porcentaje de hombres infectados por COVID en un Pais desde el primer caso activo',
+# 'Factores de muerte por COVID-19 en un pais':{
+#             'caso':23,
+#             'name':'Factores de muerte por COVID-19 en un pais',
 #             'no_parametros': 5,
-#             'parametros':['celda_tiempo','celda_genero_hombre','celda_total','celda_pais'],
-#             'opcionales': ['nombre_pais','celda_pais'],
+#             'parametros':['tiempo','celda_fallecidos','factor_muerte','celda_pais'],
 #             'parametros_texto':['nombre_pais']
 #         }
 
 # path_imgs = 'static/imgs_temp'
-name = 'Porcentaje de hombres infectados por COVID en un Pais desde el primer caso activo'
+name = 'Factores de muerte por COVID-19 en un pais'
 
 def analizar(filepath,param):
     ### Asignacion de celdas  ###############################################
-    x_celda = param['celda_tiempo']
-    hombre_celda = param['celda_genero_hombre']
-    total_celda = param['celda_total']
+    x_celda = param['tiempo']
+    y_celda = param['celda_fallecidos']
+    y_celda2 = param['factor_muerte']
     celda_pais = param['celda_pais']
     nombre_pais = param['nombre_pais']
-    y_celda = 'porcentaje'
     ### Lista de variables  ###############################################
     lista_urls_imgs = []
     lista_urls_static = []
@@ -41,17 +39,19 @@ def analizar(filepath,param):
     datos_estaticos = []
     l_encod_x = LabelEncoder()
     l_encod_y = LabelEncoder()
+    l_encod_y2 = LabelEncoder()
     ### GET DataFrame  ###############################################
     df = fm.getDataFrame(filepath)
     if(df.empty):
         print ('Error, no hay un dataframe')
         return False
     ######### Limpiar los datos ##########################################
-    df[y_celda] = round((df[hombre_celda]/df[total_celda])*100,2)
 
     limpia_x =fr.limpiarData(df,x_celda)
     limpia_y = fr.limpiarData(df,y_celda)
-    if nombre_pais != "" and celda_pais != "":
+    limpia_y2 = fr.limpiarData(df,y_celda2)
+
+    if celda_pais != "" and nombre_pais != "":
         df = df[df[celda_pais].str.contains(nombre_pais)]
         datos_calculados.append("Pais Utilizado : " + str(nombre_pais))
 
@@ -63,35 +63,76 @@ def analizar(filepath,param):
     if (limpia_y == False or df_ycelda.dtype == 'datetime64[ns]'):
         df_ycelda = l_encod_y.fit_transform(df[y_celda])
 
+    df_ycelda2 = df[y_celda2]
+    if (limpia_y2 == False or df_ycelda2.dtype == 'datetime64[ns]'):
+        df_ycelda2 = l_encod_y2.fit_transform(df[y_celda2])
+
     ##### Asginamos Variables ##########################################
     x = np.asarray(df_xcelda).reshape(-1,1)
     y = df_ycelda
-    ##### datos extras ##########################################
+    y2 = df_ycelda2
+    ##### Graph datos extras ##########################################
+    plt.scatter(df[x_celda],df[y_celda],color="red")
+    plt.scatter(df[x_celda],df[y_celda2],color="blue")
     path_aux = fr.generarUrlImg("fig_muestra.png",lista_urls_static)
-    plt.bar(df[x_celda],df[y_celda],width=0.3)
     plt.xlabel(x_celda)
-    plt.ylabel(y_celda)
-    plt.title("Data ingresada\nporcentaje en %",fontsize=10)
+    plt.title("Datos ingresados\nrojo={}\nazul={}".format(y_celda,y_celda2),fontsize=10)
     plt.xticks(rotation=45)
     plt.autoscale()
-    # for i in range(len(df[y_celda])):
-    #     plt.annotate(str(df[y_celda].iloc[i]), xy=(df[x_celda].iloc[i],df[y_celda].iloc[i]), ha='center', va='bottom')
     plt.savefig(path_aux,bbox_inches = "tight")
     plt.clf()
-
     #### build ###############################################################
-    grado = 6
+    grado = 1
     poly_feature = PolynomialFeatures(grado)
     x_transform = poly_feature.fit_transform(x)
     #### Train ###############################################################
     #algorithm
     l_reg = linear_model.LinearRegression()
-
     model = l_reg.fit(x_transform,y)
     y_predictions = model.predict(x_transform)
-
+    ########### Entrenar 2
+    model2 = l_reg.fit(x_transform,y2)
+    y_predictions2 = model2.predict(x_transform)
     #### Calculate ###########################################################
     datos_calculados.append("grado usado : " + str(grado))
+    datos_calculados.append(" datos de construccion grafica de {}:  ".format(y_celda))
+    datos_estaticos.append(" datos de construccion grafica de {}:  ".format(y_celda))
+    calculate(y,y_predictions,datos_estaticos,datos_calculados,model)
+    datos_calculados.append(" datos de construccion grafica de {}:  ".format(y_celda2))
+    datos_estaticos.append(" datos de construccion grafica de {}:  ".format(y_celda2))
+    calculate(y2,y_predictions2,datos_estaticos,datos_calculados,model2)
+    
+    #### Graph #######################################################################
+    plt.scatter(df[x_celda],df[y_celda],color="red")
+    plt.scatter(df[x_celda],df[y_celda2],color="blue")
+    path_aux = fr.generarUrlImg("fig_tendencia.png",lista_urls_imgs)
+    plt.xlabel(x_celda)
+    plt.title("Datos ingresados\nrojo={}\nazul={}".format(y_celda,y_celda2),fontsize=10)
+    plt.xticks(rotation=45)
+    plt.autoscale()
+    plt.savefig(path_aux,bbox_inches = "tight")
+    plt.clf()
+
+    #### Prediccion ##########################################################
+
+    #### Graph #######################################################################
+    title = 'grado usado {}'.format(grado)
+    title2 = 'Azul={}\nrojo={}'.format(y_celda2,y_celda)
+    plt.title(name+"\n"+title+"\n"+title2,fontsize=10)
+    plt.xlabel(x_celda)
+    plt.ylabel(y_celda)
+    plt.plot(df[x_celda],y_predictions2,color="blue",linewidth=3)
+    plt.plot(df[x_celda],y_predictions,color="red",linewidth=3)
+    plt.xticks(rotation=45)
+    path_aux = fr.generarUrlImg("fig_prediccion.png",lista_urls_imgs)
+    plt.autoscale()
+    plt.savefig(path_aux,bbox_inches = "tight")
+    plt.clf()
+    #### enviar los datos #######################################################################
+    return fr.addData(datos_calculados,lista_urls_imgs,lista_urls_static,datos_estaticos,'En la grafica se muestra la relacion que exite entre {} y {} como factor para la muerte'.format(y_celda,y_celda2),name)
+
+
+def calculate(y,y_predictions,datos_estaticos,datos_calculados,model):
     rmse = np.sqrt(mean_squared_error(y,y_predictions))
     # print("rmse:",rmse)
     datos_calculados.append("rmse : " + str(round(rmse,2)))
@@ -110,36 +151,3 @@ def analizar(filepath,param):
     intercept = model.intercept_
     datos_calculados.append("intercept : " + str(intercept))
     datos_estaticos.append("intercept : " + str(intercept))
-
-    #### Graph #######################################################################
-
-    plt.bar(df[x_celda],df[y_celda],width=0.3)
-    plt.xlabel(x_celda)
-    plt.ylabel(y_celda)
-    plt.title(name+"\nporcentaje en %",fontsize=10)
-    plt.xticks(rotation=45)
-    for i in range(len(df[y_celda])):
-        plt.annotate(str(df[y_celda].iloc[i]), xy=(df[x_celda].iloc[i],df[y_celda].iloc[i]), ha='center', va='bottom')
-    plt.savefig(path_aux,bbox_inches = "tight")
-    path_aux = fr.generarUrlImg("fig_tendencia.png",lista_urls_imgs)
-    plt.autoscale()
-    plt.savefig(path_aux,bbox_inches = "tight")
-    plt.clf()
-
-    #### Prediccion ##########################################################
-
-    #### Graph #######################################################################
-    title = 'grado usado {}; RMSE = {}; R^2={:.3f}'.format(grado,round(rmse,2),r2)
-    plt.title(name+"\n"+title,fontsize=10)
-    plt.xlabel(x_celda)
-    plt.ylabel(y_celda)
-    plt.xticks(rotation=45)
-    plt.plot(df[x_celda],y_predictions,color="red",linewidth=3)
-    path_aux = fr.generarUrlImg("fig_prediccion.png",lista_urls_imgs)
-    plt.autoscale()
-    plt.savefig(path_aux,bbox_inches = "tight")
-    plt.clf()
-    #### enviar los datos #######################################################################
-    return fr.addData(datos_calculados,lista_urls_imgs,lista_urls_static,datos_estaticos,'Se muestra el grafico de barras los porcentajes de infectados de hombres, ademas se dieron los datos para que puedan realizar una construccion de una grafica de prediccion de grado {}'.format(grado),name)
-
-

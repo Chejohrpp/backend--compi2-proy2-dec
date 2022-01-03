@@ -1,4 +1,5 @@
 import os
+import datetime
 
 from sklearn import linear_model
 from sklearn.preprocessing import PolynomialFeatures
@@ -13,25 +14,22 @@ import matplotlib.pyplot as plt
 import fun_main as fm
 import fun_reportes as fr
 
-# 'Tendencia de casos confirmados de COVID en un departamento de un Pais':{
-#             'caso':15,
-#             'name':'Tendencia de casos confirmados de COVID en un departamento de un Pais',
-#             'no_parametros': 6,
-#             'parametros':['tiempo','confirmados','celda_pais','celda_departamento'],
-#             'parametros_texto':['nombre_pais','nombre_departamento']
+# 'Tasa de crecimiento de casos de COVID-19 en relacion con nuevos casos diarios y tasa de muerte por COVID-19':{
+#             'caso':20,
+#             'name':'Tasa de crecimiento de casos de COVID-19 en relacion con nuevos casos diarios y tasa de muerte por COVID-19',
+#             'no_parametros': 3,
+#             'parametros':['celda_tiempo','casos_diarios','numero_muertes'],
 #         }
 
 # path_imgs = 'static/imgs_temp'
-name_report = 'Tendencia de casos confirmados de COVID en un departamento de un Pais'
+name = 'Tasa de crecimiento de casos de COVID-19 en relacion con nuevos casos diarios y tasa de muerte por COVID-19'
 
 def analizar(filepath,param):
     ### Asignacion de celdas  ###############################################
-    x_celda = param['tiempo']
-    y_celda = param['confirmados']
-    celda_pais = param['celda_pais']
-    celda_departamento = param['celda_departamento']
-    nombre_pais = param['nombre_pais']
-    nombre_departamento = param['nombre_departamento']
+    x_celda = param['celda_tiempo']
+    casos_diarios = param['casos_diarios']
+    numero_muertes = param['numero_muertes']
+    y_celda = 'tasa_crecimiento'
     ### Lista de variables  ###############################################
     lista_urls_imgs = []
     lista_urls_static = []
@@ -44,16 +42,11 @@ def analizar(filepath,param):
     if(df.empty):
         print ('Error, no hay un dataframe')
         return False
-
     ######### Limpiar los datos ##########################################
-    limpia_x = fr.limpiarData(df,x_celda)
+    df[y_celda] = round((df[numero_muertes]/df[casos_diarios])*100,2)
+    
+    limpia_x =fr.limpiarData(df,x_celda)
     limpia_y = fr.limpiarData(df,y_celda)
-    if celda_pais != "" and nombre_pais != "":
-        df = df[df[celda_pais].str.contains(nombre_pais)]
-        datos_calculados.append("Pais Utilizado : " + str(nombre_pais))
-        if celda_departamento != "" and nombre_departamento != "":
-            df = df[df[celda_departamento].str.contains(nombre_departamento)]
-            datos_calculados.append("Departamento Utilizado : " + str(nombre_departamento))
 
     df_xcelda = df[x_celda]
     if (limpia_x == False or df_xcelda.dtype == 'datetime64[ns]'):
@@ -62,31 +55,30 @@ def analizar(filepath,param):
     df_ycelda = df[y_celda]
     if (limpia_y == False or df_ycelda.dtype == 'datetime64[ns]'):
         df_ycelda = l_encod_y.fit_transform(df[y_celda])
-    
+
     ##### Asginamos Variables ##########################################
     x = np.asarray(df_xcelda).reshape(-1,1)
     y = df_ycelda
-
-    # ##datos extras##
-    plt.scatter(df[x_celda],df[y_celda],color="blue")
+    ##### datos extras ##########################################
     path_aux = fr.generarUrlImg("fig_muestra.png",lista_urls_static)
+    plt.bar(df[x_celda],df[y_celda],width=0.3)
     plt.xlabel(x_celda)
     plt.ylabel(y_celda)
+    plt.title("Data ingresada\nporcentaje en %",fontsize=10)
     plt.xticks(rotation=45)
-    plt.title("Datos ingresados",fontsize=10)
     plt.autoscale()
+    # for i in range(len(df[y_celda])):
+    #     plt.annotate(str(df[y_celda].iloc[i]), xy=(df[x_celda].iloc[i],df[y_celda].iloc[i]), ha='center', va='bottom')
     plt.savefig(path_aux,bbox_inches = "tight")
     plt.clf()
 
     #### build ###############################################################
-    grado = 1
+    grado = 4
     poly_feature = PolynomialFeatures(grado)
     x_transform = poly_feature.fit_transform(x)
-
     #### Train ###############################################################
     #algorithm
     l_reg = linear_model.LinearRegression()
-
     model = l_reg.fit(x_transform,y)
     y_predictions = model.predict(x_transform)
 
@@ -111,24 +103,39 @@ def analizar(filepath,param):
     datos_calculados.append("intercept : " + str(intercept))
     datos_estaticos.append("intercept : " + str(intercept))
 
-    #### Prediccion ##########################################################
-    ## no se realiza predicion aqui
+    #### Graph #######################################################################
 
+    plt.bar(df[x_celda],df[y_celda],width=0.3)
+    plt.xlabel(x_celda)
+    plt.ylabel(y_celda)
+    plt.title(name,fontsize=10)
+    plt.xticks(rotation=45)
+    # for i in range(len(df[y_celda])):
+    #     plt.annotate(str(df[y_celda].iloc[i]), xy=(df[x_celda].iloc[i],df[y_celda].iloc[i]), ha='center', va='bottom')
+    plt.savefig(path_aux,bbox_inches = "tight")
+    path_aux = fr.generarUrlImg("fig_tendencia.png",lista_urls_imgs)
+    plt.autoscale()
+    plt.savefig(path_aux,bbox_inches = "tight")
+    plt.clf()
+
+    #### Prediccion ##########################################################
+    
     #### Mostrar los puntos entrenados ##########################################################
     datos_calculados.append(" datos entrenados:  " )
     for i in range(len(df[x_celda])):
         datos_calculados.append( str(df[x_celda].iloc[i]) + " : " + str(round(y_predictions[i],2)))
     #### Graph #######################################################################
     title = 'grado usado {}; RMSE = {}; R^2={:.3f}'.format(grado,round(rmse,2),r2)
-    plt.title(name_report+"\n"+title,fontsize=10)
+    plt.title(name+"\n"+title,fontsize=10)
     plt.xlabel(x_celda)
     plt.ylabel(y_celda)
-    plt.plot(df[x_celda],y_predictions,color="red",linewidth=3)
     plt.xticks(rotation=45)
-    path_aux = fr.generarUrlImg("fig_tendencia.png",lista_urls_imgs)
+    plt.plot(df[x_celda],y_predictions,color="red",linewidth=3)
+    path_aux = fr.generarUrlImg("fig_prediccion.png",lista_urls_imgs)
     plt.autoscale()
     plt.savefig(path_aux,bbox_inches = "tight")
     plt.clf()
-    # plt.show()
-    return fr.addData(datos_calculados,lista_urls_imgs,lista_urls_static,datos_estaticos,'',name_report)
+    #### enviar los datos #######################################################################
+    return fr.addData(datos_calculados,lista_urls_imgs,lista_urls_static,datos_estaticos,'Se muestra el grafico de barras la relacion entre {} y {}, ademas se dieron los datos para que puedan realizar una construccion de una grafica de prediccion de grado {}'.format(x_celda,y_celda,grado),name)
+
 

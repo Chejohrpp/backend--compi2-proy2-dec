@@ -1,4 +1,5 @@
 import os
+import datetime
 
 from sklearn import linear_model
 from sklearn.preprocessing import PolynomialFeatures
@@ -13,25 +14,25 @@ import matplotlib.pyplot as plt
 import fun_main as fm
 import fun_reportes as fr
 
-# 'Tendencia de casos confirmados de COVID en un departamento de un Pais':{
-#             'caso':15,
-#             'name':'Tendencia de casos confirmados de COVID en un departamento de un Pais',
-#             'no_parametros': 6,
-#             'parametros':['tiempo','confirmados','celda_pais','celda_departamento'],
-#             'parametros_texto':['nombre_pais','nombre_departamento']
+# 'Prediccion de muertes en el ultimo día del primer año de infecciones en un pais':{
+#             'caso':19,
+#             'name':'Prediccion de muertes en el ultimo día del primer año de infecciones en un pais',
+#             'no_parametros': 5,
+#             'parametros':['tiempo','fallecido','celda_pais'],
+#             'opcionales': ['nombre_pais','celda_pais'],
+#             'parametros_texto':['nombre_pais']
 #         }
 
 # path_imgs = 'static/imgs_temp'
-name_report = 'Tendencia de casos confirmados de COVID en un departamento de un Pais'
+name = 'Prediccion de muertes en el ultimo día del primer año de infecciones en un pais'
 
 def analizar(filepath,param):
     ### Asignacion de celdas  ###############################################
     x_celda = param['tiempo']
-    y_celda = param['confirmados']
+    y_celda = param['fallecido']
     celda_pais = param['celda_pais']
-    celda_departamento = param['celda_departamento']
     nombre_pais = param['nombre_pais']
-    nombre_departamento = param['nombre_departamento']
+    tiempo_predecir = 10
     ### Lista de variables  ###############################################
     lista_urls_imgs = []
     lista_urls_static = []
@@ -44,16 +45,12 @@ def analizar(filepath,param):
     if(df.empty):
         print ('Error, no hay un dataframe')
         return False
-
     ######### Limpiar los datos ##########################################
-    limpia_x = fr.limpiarData(df,x_celda)
+    limpia_x =fr.limpiarData(df,x_celda)
     limpia_y = fr.limpiarData(df,y_celda)
-    if celda_pais != "" and nombre_pais != "":
+    if nombre_pais != "" and celda_pais != "":
         df = df[df[celda_pais].str.contains(nombre_pais)]
         datos_calculados.append("Pais Utilizado : " + str(nombre_pais))
-        if celda_departamento != "" and nombre_departamento != "":
-            df = df[df[celda_departamento].str.contains(nombre_departamento)]
-            datos_calculados.append("Departamento Utilizado : " + str(nombre_departamento))
 
     df_xcelda = df[x_celda]
     if (limpia_x == False or df_xcelda.dtype == 'datetime64[ns]'):
@@ -62,27 +59,24 @@ def analizar(filepath,param):
     df_ycelda = df[y_celda]
     if (limpia_y == False or df_ycelda.dtype == 'datetime64[ns]'):
         df_ycelda = l_encod_y.fit_transform(df[y_celda])
-    
+
     ##### Asginamos Variables ##########################################
     x = np.asarray(df_xcelda).reshape(-1,1)
     y = df_ycelda
-
-    # ##datos extras##
+    ##### datos extras ##########################################
     plt.scatter(df[x_celda],df[y_celda],color="blue")
     path_aux = fr.generarUrlImg("fig_muestra.png",lista_urls_static)
     plt.xlabel(x_celda)
     plt.ylabel(y_celda)
-    plt.xticks(rotation=45)
     plt.title("Datos ingresados",fontsize=10)
+    plt.xticks(rotation=45)
     plt.autoscale()
     plt.savefig(path_aux,bbox_inches = "tight")
     plt.clf()
-
     #### build ###############################################################
-    grado = 1
+    grado = 12
     poly_feature = PolynomialFeatures(grado)
     x_transform = poly_feature.fit_transform(x)
-
     #### Train ###############################################################
     #algorithm
     l_reg = linear_model.LinearRegression()
@@ -111,24 +105,52 @@ def analizar(filepath,param):
     datos_calculados.append("intercept : " + str(intercept))
     datos_estaticos.append("intercept : " + str(intercept))
 
-    #### Prediccion ##########################################################
-    ## no se realiza predicion aqui
-
-    #### Mostrar los puntos entrenados ##########################################################
-    datos_calculados.append(" datos entrenados:  " )
-    for i in range(len(df[x_celda])):
-        datos_calculados.append( str(df[x_celda].iloc[i]) + " : " + str(round(y_predictions[i],2)))
     #### Graph #######################################################################
     title = 'grado usado {}; RMSE = {}; R^2={:.3f}'.format(grado,round(rmse,2),r2)
-    plt.title(name_report+"\n"+title,fontsize=10)
+    plt.title(name+"\n"+title,fontsize=10)
     plt.xlabel(x_celda)
     plt.ylabel(y_celda)
     plt.plot(df[x_celda],y_predictions,color="red",linewidth=3)
     plt.xticks(rotation=45)
-    path_aux = fr.generarUrlImg("fig_tendencia.png",lista_urls_imgs)
+    path_aux = fr.generarUrlImg("fig_tendencia.png",lista_urls_static)
     plt.autoscale()
     plt.savefig(path_aux,bbox_inches = "tight")
     plt.clf()
-    # plt.show()
-    return fr.addData(datos_calculados,lista_urls_imgs,lista_urls_static,datos_estaticos,'',name_report)
+
+    #### Prediccion ##########################################################
+    min_d = df_xcelda.min()
+    if (df[x_celda].dtype == 'datetime64[ns]'):
+        year = df[x_celda].dt.year.min()
+        tiempo_predecir_string = '31/12/'+str(year)
+        tp = pd.to_datetime(tiempo_predecir_string)
+        tiempo_predecir = (tp - df[x_celda].min()).days
+    max_d = tiempo_predecir ##Esto tiene que ser variable
+    # x_new = np.linspace(min_d,max_d)
+    x_new = np.arange(min_d,max_d).reshape(-1,1)
+    # x_new = np.array(x_new).reshape(-1,1)
+    x_new_transform = poly_feature.fit_transform(x_new)
+    y_new_predicted = model.predict(x_new_transform)
+
+    # print("Para el dia {0} contagios seran".format(max_d),y_new_predicted[-1]) ##Imprime la ultima prediccion
+    datos_calculados.append("Cantidad extra a predecir : " + str(tiempo_predecir))
+    if (df[x_celda].dtype == 'datetime64[ns]'):
+        year = df[x_celda].dt.year.min()
+        tiempo_prediccion =  '31/12/'+str(year)
+        datos_calculados.append("Tiempo de prediccion : " + str(tiempo_prediccion))
+    else:
+        datos_calculados.append("Tiempo de prediccion : " + str(max_d-1))    
+    datos_calculados.append("Resultado de Prediccion : " + str(round(y_new_predicted[-1],2)))
+
+    #### Graph #######################################################################
+    title = 'grado usado {}; RMSE = {}; R^2={:.3f}'.format(grado,round(rmse,2),r2)
+    plt.title(name+"\n"+title,fontsize=10)
+    plt.xlabel(x_celda)
+    plt.ylabel(y_celda)
+    plt.plot(x_new,y_new_predicted,color="red",linewidth=3)
+    path_aux = fr.generarUrlImg("fig_prediccion.png",lista_urls_imgs)
+    plt.savefig(path_aux)
+    plt.clf()
+    #### enviar los datos #######################################################################
+    return fr.addData(datos_calculados,lista_urls_imgs,lista_urls_static,datos_estaticos,fr.makeConclusionPredic(round(y_new_predicted[-1],2)),name)
+
 
