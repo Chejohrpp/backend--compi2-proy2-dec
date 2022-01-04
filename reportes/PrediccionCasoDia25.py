@@ -66,7 +66,7 @@ def analizar(filepath,param):
     plt.savefig(path_aux,bbox_inches = "tight")
     plt.clf()
     #### build ###############################################################
-    grado = 4
+    grado = 8
     poly_feature = PolynomialFeatures(grado)
     x_transform = poly_feature.fit_transform(x)
     #### Train ###############################################################
