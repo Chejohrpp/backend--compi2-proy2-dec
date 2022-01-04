@@ -16,8 +16,9 @@ import fun_reportes as fr
 
 #             'caso':25,
 #             'name':'Predicción de casos confirmados por día',
-#             'no_parametros': 3,
-#             'parametros':['tiempo','confirmados'],
+#             'no_parametros': 5,
+#             'parametros':['tiempo','confirmados','celda_pais'],
+#             'parametros_texto':['nombre_pais'],
 #             'parametros_numericos':['tiempo_predecir']
 
 path_imgs = 'static/imgs_temp'
@@ -28,6 +29,8 @@ def analizar(filepath,param):
     x_celda = param['tiempo']
     y_celda = param['confirmados']
     tiempo_predecir = param['tiempo_predecir']
+    celda_pais = param['celda_pais']
+    nombre_pais = param['nombre_pais']
     ### Lista de variables  ###############################################
     lista_urls_imgs = []
     lista_urls_static = []
@@ -41,6 +44,10 @@ def analizar(filepath,param):
         print ('Error, no hay un dataframe')
         return False
     ######### Limpiar los datos ##########################################
+    if celda_pais != "" and nombre_pais != "":
+        df = df[df[celda_pais].str.contains(nombre_pais)]
+        datos_calculados.append("Pais Utilizado : " + str(nombre_pais))
+    
     df = fr.limpiarColumna(df,x_celda)
     df = fr.limpiarColumna(df,y_celda)
     limpia_x =fr.limpiarData(df,x_celda)
@@ -68,7 +75,7 @@ def analizar(filepath,param):
     plt.savefig(path_aux,bbox_inches = "tight")
     plt.clf()
     #### build ###############################################################
-    grado = 8
+    grado = 4
     poly_feature = PolynomialFeatures(grado)
     x_transform = poly_feature.fit_transform(x)
     #### Train ###############################################################

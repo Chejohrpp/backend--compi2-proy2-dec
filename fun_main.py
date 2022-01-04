@@ -228,9 +228,10 @@ def getlistadoAnalysis():
         },
         'Prediccion de casos confirmados por dia':{
             'caso':25,
-            'name':'Prediccion de casos confirmados por dia',
-            'no_parametros': 3,
-            'parametros':['tiempo','confirmados'],
+            'name':'Predicción de casos confirmados por día',
+            'no_parametros': 5,
+            'parametros':['tiempo','confirmados','celda_pais'],
+            'parametros_texto':['nombre_pais'],
             'parametros_numericos':['tiempo_predecir']
         }
     }
