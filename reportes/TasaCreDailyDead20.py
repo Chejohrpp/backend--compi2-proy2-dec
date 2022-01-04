@@ -17,8 +17,10 @@ import fun_reportes as fr
 # 'Tasa de crecimiento de casos de COVID-19 en relacion con nuevos casos diarios y tasa de muerte por COVID-19':{
 #             'caso':20,
 #             'name':'Tasa de crecimiento de casos de COVID-19 en relacion con nuevos casos diarios y tasa de muerte por COVID-19',
-#             'no_parametros': 3,
-#             'parametros':['celda_tiempo','casos_diarios','numero_muertes'],
+#             'no_parametros': 5,
+#             'parametros':['celda_tiempo','casos_diarios','numero_muertes','celda_pais'],
+#            'opcionales': ['nombre_pais','celda_pais'],
+#             'parametros_texto':['nombre_pais']
 #         }
 
 # path_imgs = 'static/imgs_temp'
@@ -29,6 +31,8 @@ def analizar(filepath,param):
     x_celda = param['celda_tiempo']
     casos_diarios = param['casos_diarios']
     numero_muertes = param['numero_muertes']
+    celda_pais = param['celda_pais']
+    nombre_pais = param['nombre_pais']
     y_celda = 'tasa_crecimiento'
     ### Lista de variables  ###############################################
     lista_urls_imgs = []
@@ -43,9 +47,16 @@ def analizar(filepath,param):
         print ('Error, no hay un dataframe')
         return False
     ######### Limpiar los datos ##########################################
+    if nombre_pais != "" and celda_pais != "":
+        df = df[df[celda_pais].str.contains(nombre_pais)]
+        datos_calculados.append("Pais Utilizado : " + str(nombre_pais))
+
+    df = fr.limpiarColumna(df,casos_diarios)
+    df = fr.limpiarColumna(df,numero_muertes)
+
     df[y_celda] = round((df[numero_muertes]/df[casos_diarios])*100,2)
+    df = df.fillna({y_celda:0})
     df = fr.limpiarColumna(df,x_celda)
-    df = fr.limpiarColumna(df,y_celda)
     limpia_x =fr.limpiarData(df,x_celda)
     limpia_y = fr.limpiarData(df,y_celda)
 

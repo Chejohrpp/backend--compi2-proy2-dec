@@ -53,6 +53,7 @@ def analizar(filepath,param):
 
     df_pais_1 = fr.limpiarColumna(df_pais_1,x_celda)
     df_pais_1 = fr.limpiarColumna(df_pais_1,y_celda)
+    df_pais_2 = fr.limpiarColumna(df_pais_2,x_celda)
     df_pais_2 = fr.limpiarColumna(df_pais_2,y_celda2)
 
     limpia_x =fr.limpiarData(df_pais_1,x_celda)

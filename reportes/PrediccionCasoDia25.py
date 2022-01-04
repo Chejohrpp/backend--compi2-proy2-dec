@@ -19,6 +19,7 @@ import fun_reportes as fr
 #             'no_parametros': 5,
 #             'parametros':['tiempo','confirmados','celda_pais'],
 #             'parametros_texto':['nombre_pais'],
+#             'opcionales': ['nombre_pais','celda_pais'],
 #             'parametros_numericos':['tiempo_predecir']
 
 path_imgs = 'static/imgs_temp'

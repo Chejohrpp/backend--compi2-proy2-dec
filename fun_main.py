@@ -193,8 +193,10 @@ def getlistadoAnalysis():
         'Tasa de crecimiento de casos de COVID-19 en relacion con nuevos casos diarios y tasa de muerte por COVID-19':{
             'caso':20,
             'name':'Tasa de crecimiento de casos de COVID-19 en relacion con nuevos casos diarios y tasa de muerte por COVID-19',
-            'no_parametros': 3,
-            'parametros':['celda_tiempo','casos_diarios','numero_muertes'],
+            'no_parametros': 5,
+            'parametros':['celda_tiempo','casos_diarios','numero_muertes','celda_pais'],
+            'opcionales': ['nombre_pais','celda_pais'],
+            'parametros_texto':['nombre_pais']
         },
          'Predicciones de casos y muertes en todo el mundo':{
              'caso':21,
@@ -232,6 +234,7 @@ def getlistadoAnalysis():
             'no_parametros': 5,
             'parametros':['tiempo','confirmados','celda_pais'],
             'parametros_texto':['nombre_pais'],
+            'opcionales': ['nombre_pais','celda_pais'],
             'parametros_numericos':['tiempo_predecir']
         }
     }

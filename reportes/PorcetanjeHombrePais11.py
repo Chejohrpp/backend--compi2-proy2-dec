@@ -47,7 +47,10 @@ def analizar(filepath,param):
         print ('Error, no hay un dataframe')
         return False
     ######### Limpiar los datos ##########################################
+    df = fr.limpiarColumna(df,hombre_celda)
+    df = fr.limpiarColumna(df,total_celda)
     df[y_celda] = round((df[hombre_celda]/df[total_celda])*100,2)
+    df = df.fillna({y_celda:0})
     df = fr.limpiarColumna(df,x_celda)
     df = fr.limpiarColumna(df,y_celda)
     limpia_x =fr.limpiarData(df,x_celda)

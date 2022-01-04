@@ -77,7 +77,7 @@ def analizar(filepath,param):
     plt.clf()
 
     #### build ###############################################################
-    grado = 3
+    grado = 4
     poly_feature = PolynomialFeatures(grado)
     x_transform = poly_feature.fit_transform(x)
 
