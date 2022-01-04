@@ -48,7 +48,8 @@ def analizar(filepath,param):
         return False
     ######### Limpiar los datos ##########################################
     df[y_celda] = round((df[hombre_celda]/df[total_celda])*100,2)
-
+    df = fr.limpiarColumna(df,x_celda)
+    df = fr.limpiarColumna(df,y_celda)
     limpia_x =fr.limpiarData(df,x_celda)
     limpia_y = fr.limpiarData(df,y_celda)
     if nombre_pais != "" and celda_pais != "":

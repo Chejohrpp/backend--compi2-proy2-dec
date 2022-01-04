@@ -47,6 +47,8 @@ def analizar(filepath,param):
         print ('Error, no hay un dataframe')
         return False
     ######### Limpiar los datos ##########################################
+    df = fr.limpiarColumna(df,x_celda)
+    df = fr.limpiarColumna(df,y_celda)
     limpia_x =fr.limpiarData(df,x_celda)
     limpia_y = fr.limpiarData(df,y_celda)
     if nombre_pais != "" and celda_pais != "":
@@ -75,7 +77,7 @@ def analizar(filepath,param):
     plt.savefig(path_aux,bbox_inches = "tight")
     plt.clf()
     #### build ###############################################################
-    grado = 12
+    grado = 1
     poly_feature = PolynomialFeatures(grado)
     x_transform = poly_feature.fit_transform(x)
     #### Train ###############################################################

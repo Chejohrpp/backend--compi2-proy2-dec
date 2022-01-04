@@ -47,6 +47,9 @@ def analizar(filepath,param):
         print ('Error, no hay un dataframe')
         return False
     ######### Limpiar los datos ##########################################
+    df = fr.limpiarColumna(df,x_celda)
+    df = fr.limpiarColumna(df,y_celda)
+    df = fr.limpiarColumna(df,y_celda2)
     limpia_x =fr.limpiarData(df,x_celda)
     limpia_y = fr.limpiarData(df,y_celda)
     limpia_y2 = fr.limpiarData(df,y_celda2)

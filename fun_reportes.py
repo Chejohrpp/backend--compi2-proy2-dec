@@ -27,6 +27,9 @@ def limpiarData(df,celda):
                     return False
     return True
 
+def limpiarColumna(df,celda):
+    return df.dropna(subset=[celda])
+
 
 def addData(datos_calculados,lista_urls_imgs,lista_urls_static,datos_estaticos,conclusion,name):
     lista_datos ={

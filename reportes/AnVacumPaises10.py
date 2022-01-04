@@ -52,6 +52,10 @@ def analizar(filepath,param):
     df_pais_1 = df[df[celda_pais].str.contains(nombre_pais1)]
     df_pais_2 = df[df[celda_pais].str.contains(nombre_pais2)]
 
+    df_pais_1 = fr.limpiarColumna(df_pais_1,x_celda)
+    df_pais_1 = fr.limpiarColumna(df_pais_1,y_celda)
+    df_pais_2 = fr.limpiarColumna(df_pais_2,y_celda2)
+
     limpia_x =fr.limpiarData(df_pais_1,x_celda)
     limpia_y = fr.limpiarData(df_pais_1,y_celda)
     limpia_y2 = fr.limpiarData(df_pais_2,y_celda2)
